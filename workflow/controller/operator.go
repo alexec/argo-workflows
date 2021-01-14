@@ -1073,7 +1073,7 @@ func (woc *wfOperationCtx) assessNodeStatus(un *unstructured.Unstructured, node 
 	gvr, _ := meta.UnsafeGuessKindToResource(gvk)
 	if gvr.Empty() {
 		node.Phase = wfv1.NodeError
-		node.Message = fmt.Sprintf("unable to guest group-version-resource from \"%v\"", gvk)
+		node.Message = fmt.Sprintf("unable to gues group-version-resource from \"%v\"", gvk)
 	} else if gvr.Resource == "pods" {
 		pod, err := wfutil.PodFromUnstructured(un)
 		if err != nil {
@@ -1090,7 +1090,6 @@ func (woc *wfOperationCtx) assessNodeStatus(un *unstructured.Unstructured, node 
 			node.FinishedAt = metav1.Now()
 		}
 	}
-
 	return node
 }
 

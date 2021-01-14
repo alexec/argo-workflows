@@ -12,7 +12,6 @@ import (
 	apierr "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	"github.com/argoproj/argo/config"
 	"github.com/argoproj/argo/errors"
 	"github.com/argoproj/argo/persist/sqldb"
 	workflowpkg "github.com/argoproj/argo/pkg/apiclient/workflow"
@@ -37,7 +36,6 @@ type workflowServer struct {
 	clusterName           wfv1.ClusterName
 	namespace             string
 	managedNamespace      string
-	resources             config.Resources
 	instanceIDService     instanceid.Service
 	offloadNodeStatusRepo sqldb.OffloadNodeStatusRepo
 	hydrator              hydrator.Interface
@@ -46,12 +44,11 @@ type workflowServer struct {
 const latestAlias = "@latest"
 
 // NewWorkflowServer returns a new workflowServer
-func NewWorkflowServer(clusterName wfv1.ClusterName, namespace, managedNamespace string, resources config.Resources, instanceIDService instanceid.Service, offloadNodeStatusRepo sqldb.OffloadNodeStatusRepo) workflowpkg.WorkflowServiceServer {
+func NewWorkflowServer(clusterName wfv1.ClusterName, namespace, managedNamespace string, instanceIDService instanceid.Service, offloadNodeStatusRepo sqldb.OffloadNodeStatusRepo) workflowpkg.WorkflowServiceServer {
 	return &workflowServer{
 		clusterName,
 		namespace,
 		managedNamespace,
-		resources,
 		instanceIDService,
 		offloadNodeStatusRepo,
 		hydrator.New(offloadNodeStatusRepo),

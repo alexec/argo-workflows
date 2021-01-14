@@ -38,7 +38,6 @@ spec:
 		Then().
 		ExpectWorkflow(func(t *testing.T, m *metav1.ObjectMeta, status *wfv1.WorkflowStatus) {
 			assert.Equal(t, wfv1.NodeSucceeded, status.Phase)
-			assert.Equal(t, "configmaps.v1.", status.Nodes[m.Name].Resource)
 		})
 }
 

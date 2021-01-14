@@ -25,10 +25,6 @@ func (woc *wfOperationCtx) applyExecutionControl(ctx context.Context, clusterNam
 	if err != nil {
 		return fmt.Errorf("failed to convert unstructured to pod: %w", err)
 	}
-	return woc.applyPodExecutionControl(ctx, clusterName, pod, wfNodesLock)
-}
-
-func (woc *wfOperationCtx) applyPodExecutionControl(ctx context.Context, clusterName wfv1.ClusterName, pod *apiv1.Pod, wfNodesLock *sync.RWMutex) error {
 	switch pod.Status.Phase {
 	case apiv1.PodSucceeded, apiv1.PodFailed:
 		// Skip any pod which are already completed

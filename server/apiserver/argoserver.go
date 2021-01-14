@@ -239,7 +239,7 @@ func (as *argoServer) newGRPCServer(clusterName wfv1.ClusterName, resources conf
 	eventpkg.RegisterEventServiceServer(grpcServer, eventServer)
 	eventsourcepkg.RegisterEventSourceServiceServer(grpcServer, eventsource.NewEventSourceServer())
 	sensorpkg.RegisterSensorServiceServer(grpcServer, sensor.NewSensorServer())
-	workflowpkg.RegisterWorkflowServiceServer(grpcServer, workflow.NewWorkflowServer(clusterName, as.namespace, as.managedNamespace, resources, instanceIDService, offloadNodeStatusRepo))
+	workflowpkg.RegisterWorkflowServiceServer(grpcServer, workflow.NewWorkflowServer(clusterName, as.namespace, as.managedNamespace, instanceIDService, offloadNodeStatusRepo))
 	workflowtemplatepkg.RegisterWorkflowTemplateServiceServer(grpcServer, workflowtemplate.NewWorkflowTemplateServer(instanceIDService))
 	cronworkflowpkg.RegisterCronWorkflowServiceServer(grpcServer, cronworkflow.NewCronWorkflowServer(instanceIDService))
 	workflowarchivepkg.RegisterArchivedWorkflowServiceServer(grpcServer, workflowarchive.NewWorkflowArchiveServer(wfArchive))
