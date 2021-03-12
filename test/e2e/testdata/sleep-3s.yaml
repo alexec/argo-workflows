@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
-  generateName: sleep-3s-
+  name: sleep-3s
 spec:
   entrypoint: sleep-3s
   templates:
