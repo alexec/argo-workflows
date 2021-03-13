@@ -668,9 +668,7 @@ spec:
 		When().
 		MemoryQuota("130M").
 		SubmitWorkflow().
-		WaitForWorkflow(fixtures.Condition(func(wf *wfv1.Workflow) (bool, string) {
-			return wf.Status.Phase == wfv1.WorkflowFailed, "Waiting for timeout"
-		}), 30*time.Second).
+		WaitForWorkflow(fixtures.ToBeFailed).
 		DeleteMemoryQuota()
 }
 
@@ -706,8 +704,7 @@ spec:
 
 func (s *FunctionalSuite) TestWorkflowPodSpecPatch() {
 	s.Given().
-		Workflow(`apiVersion: argoproj.io/v1alpha1
-kind: Workflow
+		Workflow(`
 metadata:
   generateName: basic-
 spec:
