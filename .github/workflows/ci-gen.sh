@@ -17,12 +17,13 @@ gen() {
    ../../hack/auto-gen-msg.sh > $2-$3.yaml
 }
 
-gen "Test Docker Executor" test-executor docker
-gen "Test Emissary Executor" test-executor emissary
-gen "Test K8SAPI Executor" test-executor k8sapi
-gen "Test Kubelet Executor" test-executor kubelet
-gen "Test PNS Executor" test-executor pns
+gen "Test Executor (docker)" test-executor docker
+gen "Test Executor (Emissary)" test-executor emissary
+gen "Test Executor (k8sapi)" test-executor k8sapi
+gen "Test Executor (kubelet)" test-executor kubelet
+gen "Test Executor (pns)" test-executor pns
 
+gen "Test API" test-api docker
 gen "Test CLI" test-cli docker
 gen "Test Cron Workflows" test-e2e-cron docker
 gen "Test Examples" test-examples docker

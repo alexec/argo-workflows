@@ -1,5 +1,5 @@
 # This is an auto-generated file. DO NOT EDIT
-name: Test Docker Executor
+name: Test Executor (docker)
 on:
   push:
     branches:

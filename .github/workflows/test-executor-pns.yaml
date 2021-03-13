@@ -1,5 +1,5 @@
 # This is an auto-generated file. DO NOT EDIT
-name: Test PNS Executor
+name: Test Executor (pns)
 on:
   push:
     branches:

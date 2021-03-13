@@ -490,6 +490,10 @@ postgres-cli:
 mysql-cli:
 	kubectl exec -ti `kubectl get pod -l app=mysql -o name|cut -c 5-` -- mysql -u mysql -ppassword argo
 
+.PHONY: test-api
+test-api: ./dist/argo
+	 $(GOTEST) -timeout 5m -count 1 --tags api -p 1 ./test/e2e
+
 .PHONY: test-cli
 test-cli: ./dist/argo
 	 $(GOTEST) -timeout 5m -count 1 --tags cli -p 1 ./test/e2e
@@ -508,7 +512,7 @@ test-examples: ./dist/argo
 
 .PHONY: test-functional
 test-functional:
-	$(GOTEST) -timeout 15m -count 1 --tags api,functional -p 1 ./test/e2e
+	$(GOTEST) -timeout 15m -count 1 --tags functional -p 1 ./test/e2e
 
 # clean
 
