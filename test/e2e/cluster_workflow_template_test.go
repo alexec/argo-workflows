@@ -1,4 +1,4 @@
-// +build e2e
+// +build functional
 
 package e2e
 
@@ -34,8 +34,6 @@ func (s *ClusterWorkflowTemplateSuite) TestNestedClusterWorkflowTemplate() {
 		When().CreateClusterWorkflowTemplates().
 		Given().
 		Workflow(`
-apiVersion: argoproj.io/v1alpha1
-kind: Workflow
 metadata:
   generateName: cwft-wf-
 spec:

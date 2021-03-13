@@ -99,8 +99,6 @@ func (s *E2ESuite) AfterTest(suiteName, testName string) {
 	}
 }
 
-var foreground = metav1.DeletePropagationForeground
-
 func (s *E2ESuite) DeleteResources() {
 	ctx := context.Background()
 	// delete pods first, this means workflows can finish faster
@@ -120,7 +118,7 @@ func (s *E2ESuite) DeleteResources() {
 		{Version: "v1", Resource: "configmaps"},
 	}
 	for _, r := range resources {
-		s.CheckError(s.dynamicFor(r).DeleteCollection(ctx, metav1.DeleteOptions{PropagationPolicy: &foreground}, hasTestLabel))
+		s.CheckError(s.dynamicFor(r).DeleteCollection(ctx, metav1.DeleteOptions{}, hasTestLabel))
 	}
 
 	// delete archived workflows from the archive
