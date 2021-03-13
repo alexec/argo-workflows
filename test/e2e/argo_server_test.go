@@ -738,8 +738,7 @@ func (s *ArgoServerSuite) TestWorkflowService() {
         {
           "name": "run-workflow",
           "container": {
-            "image": "argoproj/argosay:v2",
-            "args": ["sleep", "10s"]   
+            "image": "argoproj/argosay:v2"
           }
         }
       ],
