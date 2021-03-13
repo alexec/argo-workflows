@@ -581,9 +581,8 @@ spec:
 		Then().
 		ExpectWorkflow(func(t *testing.T, md *metav1.ObjectMeta, status *wfv1.WorkflowStatus) {
 			assert.Equal(t, wfv1.WorkflowFailed, status.Phase)
-			if node := status.Nodes.FindByDisplayName(md.Name); assert.NotNil(t, node) {
-				assert.Contains(t, node.Message, "No more retries left")
-			}
+			node := status.Nodes[md.Name]
+			assert.Contains(t, node.Message, "No more retries left")
 			assert.Len(t, status.Nodes, 3)
 		})
 }
