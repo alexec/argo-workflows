@@ -445,9 +445,7 @@ func (s *ArgoServerSuite) TestPermission() {
         {
           "name": "run-workflow",
           "container": {
-            "image": "argoproj/argosay:v2",
-            "command": ["sh"],
-            "args": ["-c", "sleep 1"]
+            "image": "argoproj/argosay:v2"
           }
         }
       ],
@@ -494,8 +492,7 @@ func (s *ArgoServerSuite) TestPermission() {
         {
           "name": "run-workflow",
           "container": {
-            "image": "argoproj/argosay:v2",
-            "args": [ "sleep", "1" ]
+            "image": "argoproj/argosay:v2"
           }
         }
       ],
