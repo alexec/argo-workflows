@@ -14,6 +14,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	wfv1 "github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
+	"github.com/argoproj/argo-workflows/v3/util/env"
 	"github.com/argoproj/argo-workflows/v3/workflow/executor"
 )
 
@@ -42,6 +43,8 @@ The wait container can create one file itself, used for terminating the sub-proc
 
 */
 type emissary struct{}
+
+var pollDuration = env.LookupEnvDurationOr("POLL_DURATION", 1*time.Second)
 
 func New() (executor.ContainerRuntimeExecutor, error) {
 	return &emissary{}, nil
@@ -129,7 +132,7 @@ func (e emissary) Wait(ctx context.Context, containerNames []string) error {
 			if e.isComplete(containerNames) {
 				return nil
 			}
-			time.Sleep(3 * time.Second)
+			time.Sleep(pollDuration)
 		}
 	}
 }

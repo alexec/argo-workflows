@@ -19,6 +19,7 @@ import (
 
 	wfv1 "github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
 	"github.com/argoproj/argo-workflows/v3/util/archive"
+	"github.com/argoproj/argo-workflows/v3/util/env"
 	"github.com/argoproj/argo-workflows/v3/workflow/common"
 	osspecific "github.com/argoproj/argo-workflows/v3/workflow/executor/os-specific"
 )
@@ -27,6 +28,7 @@ var (
 	varRunArgo          = "/var/run/argo"
 	containerName       = os.Getenv(common.EnvVarContainerName)
 	includeScriptOutput = os.Getenv(common.EnvVarIncludeScriptOutput) == "true" // capture stdout/stderr
+	pollDuration        = env.LookupEnvDurationOr("POLL_DURATION", 1*time.Second)
 	template            = &wfv1.Template{}
 	logger              = log.WithField("argo", true)
 )
@@ -80,7 +82,7 @@ func NewEmissaryCommand() *cobra.Command {
 						for {
 							data, err := ioutil.ReadFile(varRunArgo + "/ctr/" + y + "/exitcode")
 							if os.IsNotExist(err) {
-								time.Sleep(3 * time.Second)
+								time.Sleep(pollDuration)
 								continue
 							}
 							exitCode, err := strconv.Atoi(string(data))

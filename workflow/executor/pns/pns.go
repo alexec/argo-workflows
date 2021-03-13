@@ -18,6 +18,7 @@ import (
 
 	"github.com/argoproj/argo-workflows/v3/errors"
 	"github.com/argoproj/argo-workflows/v3/util/archive"
+	"github.com/argoproj/argo-workflows/v3/util/env"
 	"github.com/argoproj/argo-workflows/v3/workflow/common"
 	"github.com/argoproj/argo-workflows/v3/workflow/executor/k8sapi"
 	osspecific "github.com/argoproj/argo-workflows/v3/workflow/executor/os-specific"
@@ -41,6 +42,8 @@ type PNSExecutor struct {
 	// rootFS holds a file descriptor to the root filesystem, allowing the executor to exit out of a chroot
 	rootFS *os.File
 }
+
+var pollDuration = env.LookupEnvDurationOr("POLL_DURATION", 1*time.Second)
 
 func NewPNSExecutor(clientset *kubernetes.Clientset, podName, namespace string) (*PNSExecutor, error) {
 	thisPID := os.Getpid()
@@ -176,7 +179,7 @@ OUTER:
 					log.Infof("%q pid %d completed", containerName, pid)
 					continue OUTER
 				}
-				time.Sleep(3 * time.Second)
+				time.Sleep(pollDuration)
 			}
 		}
 	}
