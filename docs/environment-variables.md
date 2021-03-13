@@ -42,5 +42,6 @@ Note that these environment variables may be removed at any time.
 | `EXECUTOR_RETRY_BACKOFF_FACTOR` | `float` | The retry backoff factor when the workflow executor performs retries. |
 | `EXECUTOR_RETRY_BACKOFF_JITTER` | `float` | The retry backoff jitter when the workflow executor performs retries. |
 | `EXECUTOR_RETRY_BACKOFF_STEPS` | `int` | The retry backoff steps when the workflow executor performs retries. |
+| `POLL_DURATION` | `time.Duration` | How often to poll for status change (if supported by executor). Default `1s`. |
 | `PNS_PRIVILEGED` | `bool` | Whether to always set privileged on for PNS when PNS executor is used. |
 | `REMOVE_LOCAL_ART_PATH` | `bool` | Whether to remove local artifacts. |
