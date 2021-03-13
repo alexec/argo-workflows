@@ -502,6 +502,10 @@ test-cli: ./dist/argo
 test-e2e-cron:
 	$(GOTEST) -count 1 --tags cron -parallel 10 ./test/e2e
 
+.PHONY: test-e2e
+test-e2e:
+	$(GOTEST) -timeout 5m -count 1 --tags e2e -p 1 ./test/e2e
+
 .PHONY: test-executor
 test-executor:
 	$(GOTEST) -timeout 5m -count 1 --tags executor -p 1 ./test/e2e

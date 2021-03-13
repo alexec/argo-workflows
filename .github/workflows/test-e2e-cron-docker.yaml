@@ -1,5 +1,5 @@
 # This is an auto-generated file. DO NOT EDIT
-name: Test Cron Workflows
+name: Test Cron
 on:
   push:
     branches:
