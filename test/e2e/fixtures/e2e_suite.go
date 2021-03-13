@@ -120,7 +120,7 @@ func (s *E2ESuite) DeleteResources() {
 		{Version: "v1", Resource: "configmaps"},
 	}
 	for _, r := range resources {
-		s.CheckError(s.dynamicFor(r).DeleteCollection(ctx, metav1.DeleteOptions{}, hasTestLabel))
+		s.CheckError(s.dynamicFor(r).DeleteCollection(ctx, metav1.DeleteOptions{PropagationPolicy: &foreground}, hasTestLabel))
 	}
 
 	// delete archived workflows from the archive

@@ -631,8 +631,6 @@ spec:
 func (s *FunctionalSuite) TestTemplateLevelTimeoutWithForbidden() {
 	s.Given().
 		Workflow(`
-apiVersion: argoproj.io/v1alpha1
-kind: Workflow
 metadata:
   generateName: steps-tmpl-timeout-
 spec:
@@ -668,8 +666,7 @@ spec:
 		When().
 		MemoryQuota("130M").
 		SubmitWorkflow().
-		WaitForWorkflow(fixtures.ToBeFailed).
-		DeleteMemoryQuota()
+		WaitForWorkflow(fixtures.ToBeFailed)
 }
 
 func (s *FunctionalSuite) TestExitCodePNSSleep() {
