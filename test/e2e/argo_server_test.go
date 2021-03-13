@@ -1173,7 +1173,7 @@ func (s *ArgoServerSuite) TestArchivedWorkflowService() {
 	s.Given().
 		Workflow(`
 metadata:
-  name: archie
+  generateName: archie-
   labels:
     foo: 1
 spec:
@@ -1192,7 +1192,7 @@ spec:
 	s.Given().
 		Workflow(`
 metadata:
-  name: betty
+  generateName: betty-
   labels:
     foo: 2
 spec:
@@ -1295,7 +1295,7 @@ spec:
 			Status(200).
 			JSON().
 			Path("$.metadata.name").
-			Equal("archie")
+			NotNull()
 	})
 
 	s.Run("Delete", func() {

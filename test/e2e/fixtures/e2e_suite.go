@@ -19,7 +19,6 @@ import (
 	// load authentication plugin for obtaining credentials from cloud providers.
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
 	"k8s.io/client-go/rest"
-	"k8s.io/utils/pointer"
 
 	"github.com/argoproj/argo-workflows/v3/config"
 	"github.com/argoproj/argo-workflows/v3/pkg/apis/workflow"
@@ -104,13 +103,8 @@ var foreground = metav1.DeletePropagationForeground
 
 func (s *E2ESuite) DeleteResources() {
 	ctx := context.Background()
-	// aggressive deletion options
-	deleteOptions := metav1.DeleteOptions{
-		GracePeriodSeconds: pointer.Int64Ptr(0),
-		PropagationPolicy:  &foreground,
-	}
 	// delete pods first, this means workflows can finish faster
-	err := s.KubeClient.CoreV1().Pods(Namespace).DeleteCollection(ctx, deleteOptions, metav1.ListOptions{LabelSelector: common.LabelKeyWorkflow})
+	err := s.KubeClient.CoreV1().Pods(Namespace).DeleteCollection(ctx, metav1.DeleteOptions{}, metav1.ListOptions{LabelSelector: common.LabelKeyWorkflow})
 	s.CheckError(err)
 
 	hasTestLabel := metav1.ListOptions{LabelSelector: Label}
@@ -126,17 +120,7 @@ func (s *E2ESuite) DeleteResources() {
 		{Version: "v1", Resource: "configmaps"},
 	}
 	for _, r := range resources {
-		resourceInterface := s.dynamicFor(r)
-		for {
-			err := resourceInterface.DeleteCollection(ctx, deleteOptions, hasTestLabel)
-			s.CheckError(err)
-			list, err := resourceInterface.List(ctx, hasTestLabel)
-			s.CheckError(err)
-			if len(list.Items) == 0 {
-				break
-			}
-			time.Sleep(time.Second)
-		}
+		s.CheckError(s.dynamicFor(r).DeleteCollection(ctx, metav1.DeleteOptions{}, hasTestLabel))
 	}
 
 	// delete archived workflows from the archive

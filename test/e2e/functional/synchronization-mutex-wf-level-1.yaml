@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
-  name: synchronization-wf-level-mutex-1
+  generateName: synchronization-wf-level-mutex-1-
 spec:
   entrypoint: whalesay
   synchronization:

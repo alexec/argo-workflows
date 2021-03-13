@@ -3,7 +3,6 @@
 package e2e
 
 import (
-	"strings"
 	"testing"
 	"time"
 
@@ -103,7 +102,7 @@ func (s *FunctionalSuite) TestContinueOnFail() {
 apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
-  name: continue-on-fail
+  generateName: continue-on-fail-
 spec:
   entrypoint: workflow-ignore
   parallelism: 2
@@ -156,7 +155,7 @@ func (s *FunctionalSuite) TestContinueOnFailDag() {
 apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
-  name: continue-on-failed-dag
+  generateName: continue-on-failed-dag-
 spec:
   entrypoint: workflow-ignore
   parallelism: 2
@@ -523,7 +522,7 @@ func (s *FunctionalSuite) TestParametrizableAds() {
 apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
-  name: param-ads
+  generateName: param-ads-
 spec:
   entrypoint: whalesay
   arguments:
@@ -544,9 +543,9 @@ spec:
 		SubmitWorkflow().
 		WaitForWorkflow().
 		Then().
-		ExpectWorkflow(func(t *testing.T, _ *metav1.ObjectMeta, status *wfv1.WorkflowStatus) {
+		ExpectWorkflow(func(t *testing.T, md *metav1.ObjectMeta, status *wfv1.WorkflowStatus) {
 			assert.Equal(t, wfv1.WorkflowFailed, status.Phase)
-			if node := status.Nodes.FindByDisplayName("param-ads"); assert.NotNil(t, node) {
+			if node := status.Nodes.FindByDisplayName(md.Name); assert.NotNil(t, node) {
 				assert.Contains(t, node.Message, "Pod was active on the node longer than the specified deadline")
 			}
 		})
@@ -558,7 +557,7 @@ func (s *FunctionalSuite) TestParametrizableLimit() {
 apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
-  name: param-limit
+  generateName: param-limit-
 spec:
   entrypoint: whalesay
   arguments:
@@ -580,59 +579,12 @@ spec:
 		SubmitWorkflow().
 		WaitForWorkflow().
 		Then().
-		ExpectWorkflow(func(t *testing.T, _ *metav1.ObjectMeta, status *wfv1.WorkflowStatus) {
+		ExpectWorkflow(func(t *testing.T, md *metav1.ObjectMeta, status *wfv1.WorkflowStatus) {
 			assert.Equal(t, wfv1.WorkflowFailed, status.Phase)
-			if node := status.Nodes.FindByDisplayName("param-limit"); assert.NotNil(t, node) {
+			if node := status.Nodes.FindByDisplayName(md.Name); assert.NotNil(t, node) {
 				assert.Contains(t, node.Message, "No more retries left")
 			}
 			assert.Len(t, status.Nodes, 3)
-		})
-}
-
-// invalid commands will cause the executor to exit earlier than expected, but these errors must still
-// get returned to the controller, the wait container must fail the wait
-func (s *FunctionalSuite) TestInvalidCommand() {
-	s.Given().
-		Workflow(`
-metadata:
-  generateName: invalid-command-
-spec:
-  entrypoint: main
-  templates:
-  - name: main
-    container:
-      image: argoproj/argosay:v2
-      command: [invalid-command]
-`).
-		When().
-		SubmitWorkflow().
-		WaitForWorkflow().
-		Then().
-		ExpectWorkflow(func(t *testing.T, _ *metav1.ObjectMeta, status *wfv1.WorkflowStatus) {
-			assert.Equal(t, wfv1.WorkflowFailed, status.Phase)
-			assert.Contains(t, status.Message, "invalid-command")
-		})
-}
-
-func (s *FunctionalSuite) TestStorageQuotaLimit() {
-	// TODO Test fails due to unstable PVC creation and termination in K3S
-	// PVC will stuck in pending state for while.
-
-	s.T().SkipNow()
-	s.Given().
-		Workflow("@testdata/storage-limit.yaml").
-		When().
-		StorageQuota("5Mi").
-		SubmitWorkflow().
-		WaitForWorkflow(fixtures.ToStart).
-		WaitForWorkflow(fixtures.Condition(func(wf *wfv1.Workflow) (bool, string) {
-			return strings.Contains(wf.Status.Message, "Waiting for a PVC to be created"), "PVC pending"
-		})).
-		DeleteStorageQuota().
-		WaitForWorkflow().
-		Then().
-		ExpectWorkflow(func(t *testing.T, _ *metav1.ObjectMeta, status *wfv1.WorkflowStatus) {
-			assert.Equal(t, wfv1.WorkflowSucceeded, status.Phase)
 		})
 }
 
@@ -642,7 +594,7 @@ func (s *FunctionalSuite) TestTemplateLevelTimeout() {
 apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
-  name: steps-tmpl-timeout
+  generateName: steps-tmpl-timeout-
 spec:
   entrypoint: hello-hello-hello
   templates:
@@ -683,7 +635,7 @@ func (s *FunctionalSuite) TestTemplateLevelTimeoutWithForbidden() {
 apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
-  name: steps-tmpl-timeout
+  generateName: steps-tmpl-timeout-
 spec:
   entrypoint: hello-hello-hello
   templates:
@@ -728,7 +680,7 @@ func (s *FunctionalSuite) TestExitCodePNSSleep() {
 		Workflow(`apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
-  name: cond
+  generateName: cond-
 spec:
   entrypoint: conditional-example
   templates:
@@ -758,7 +710,7 @@ func (s *FunctionalSuite) TestWorkflowPodSpecPatch() {
 		Workflow(`apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
-  name: basic
+  generateName: basic-
 spec:
   entrypoint: main
   templates:

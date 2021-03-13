@@ -45,7 +45,7 @@ START_UI              ?= $(shell [ "$(CI)" != "" ] && echo true || echo false)
 GOTEST                ?= go test -v
 PROFILE               ?= minimal
 # by keeping this short we speed up the tests
-DEFAULT_REQUEUE_TIME  ?= 2s
+DEFAULT_REQUEUE_TIME  ?= 100ms
 # whether or not to start the Argo Service in TLS mode
 SECURE                := false
 AUTH_MODE             := hybrid
@@ -438,11 +438,11 @@ dist/argosay: test/e2e/images/argosay/v2/main/argosay.go
 
 .PHONY: pull-images
 pull-images:
-	docker pull mysql:8
 	docker pull golang:1.15.7
 	docker pull debian:10.7-slim
-	docker pull argoproj/argosay:v2
+	docker pull mysql:8
 	docker pull argoproj/argosay:v1
+	docker pull argoproj/argosay:v2
 	docker pull python:alpine3.6
 
 $(GOPATH)/bin/goreman:
@@ -491,25 +491,23 @@ mysql-cli:
 	kubectl exec -ti `kubectl get pod -l app=mysql -o name|cut -c 5-` -- mysql -u mysql -ppassword argo
 
 .PHONY: test-cli
-test-cli: ./dist/argo pull-images
-	E2E_MODE=GRPC  $(GOTEST) -timeout 5m -count 1 --tags cli -p 1 ./test/e2e
-	E2E_MODE=HTTP1 $(GOTEST) -timeout 5m -count 1 --tags cli -p 1 ./test/e2e
-	E2E_MODE=KUBE  $(GOTEST) -timeout 5m -count 1 --tags cli -p 1 ./test/e2e
+test-cli: ./dist/argo
+	 $(GOTEST) -timeout 5m -count 1 --tags cli -p 1 ./test/e2e
 
 .PHONY: test-e2e-cron
-test-e2e-cron: pull-images
+test-e2e-cron:
 	$(GOTEST) -count 1 --tags cron -parallel 10 ./test/e2e
 
 .PHONY: test-executor
-test-executor: pull-images
+test-executor:
 	$(GOTEST) -timeout 5m -count 1 --tags executor -p 1 ./test/e2e
 
 .PHONY: test-examples
-test-examples: ./dist/argo pull-images
+test-examples: ./dist/argo
 	./hack/test-examples.sh
 
 .PHONY: test-functional
-test-functional: pull-images
+test-functional:
 	$(GOTEST) -timeout 15m -count 1 --tags api,functional -p 1 ./test/e2e
 
 # clean
